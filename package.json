@@ -1,0 +1,16 @@
+{
+  "name": "lks-job-vacancy",
+  "version": "1.0.0",
+  "description": "membuat aplikasi job vacancy",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Iqbal GTG",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "md5": "^2.3.0",
+    "mongoose": "^8.5.4"
+  }
+}
