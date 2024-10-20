@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const user = mongoose.Schema({
-  id_card: {
-    type: Number,
+  no_ktp: {
+    type: String,
     required: true,
     validate: {
       validator: (v) => {
@@ -11,7 +11,7 @@ const user = mongoose.Schema({
       message: "Atribut harus memiliki 16 digit",
     },
   },
-  password: { type: Number, required: true },
+  password: { type: String, required: true },
 });
 
 const User = mongoose.model("User", user);
