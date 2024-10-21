@@ -4,10 +4,10 @@ const companySchema = mongoose.Schema({
   name_company: {
     type: String,
   },
-  token: {
+  address: {
     type: String,
-    require: false,
   },
+  status: { type: Boolean, default: false },
 });
 
 const Company = mongoose.model("Company", companySchema);

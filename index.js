@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require("mongoose");
 const User = require("./model/User");
 const DataValidation = require("./model/Validation-data");
+const DataJobPosition = require("./model/JobPosition");
 const Company = require("./model/Company");
 const md5 = require("md5");
 const cors = require("cors");
@@ -73,6 +74,68 @@ app.get("/job-vacancies", async (req, res) => {
     const company = await Company.find();
     res.status(200).json({
       message: company,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
+app.put("/job-vacancies/:company", async (req, res) => {
+  try {
+    const company = await Company.updateOne(
+      { name_company: req.params.company },
+      { status: true }
+    );
+    res.status(200).json({
+      message: company,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
+app.get("/select-position/:token/:name_company", async (req, res) => {
+  try {
+    const { token, name_company } = req.params;
+
+    if (token !== "") {
+      const dataJob = await DataJobPosition.findOne({ token });
+      return res.status(200).json({
+        message: dataJob,
+      });
+    }
+    if (name_company !== "") {
+      const dataJob = await DataJobPosition.findOne({ name_company });
+      console.log(dataJob);
+
+      return res.status(200).json({
+        message: dataJob,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "data tidak ada",
+    });
+  }
+});
+
+app.post("/select-position", async (req, res) => {
+  try {
+    const dataJob = await DataJobPosition.create({
+      name_company: req.body.name_company,
+      Address: req.body.Address,
+      Position: req.body.Position,
+      notes: req.body.notes,
+      token: req.body.token,
+    });
+    console.log(req.body.name_company);
+
+    res.status(200).json({
+      message: "data berhasil di kirim",
     });
   } catch (error) {
     res.status(500).json({
