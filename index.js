@@ -69,8 +69,32 @@ app.post("/request-validation", async (req, res) => {
   }
 });
 
-app.get("/job-vacancies", async (req, res) => {
+app.get("/job-vacancies/:token", async (req, res) => {
   try {
+    const token = req.params.token;
+    // mengambil dataJob menggunakan token
+    const dataJob = await DataJobPosition.find({ token });
+
+    // jika data job tidak ada maka langsung me-return company
+    if (dataJob.length == 0) {
+      const company = await Company.find();
+      return res.status(200).json({
+        message: company,
+      });
+    }
+    // jika datanya ada maka si data job akan diambil nilai name_company menggunakan map lalu data company di update berdasarkan nilai name_company dari dataJob
+    if (dataJob.length !== 0) {
+      dataJob.map(async (v, i) => {
+        const company = await Company.updateMany(
+          { name_company: v.name_company },
+          {
+            status: { token },
+          }
+        );
+        console.log(company);
+      });
+    }
+
     const company = await Company.find();
     res.status(200).json({
       message: company,
@@ -82,28 +106,28 @@ app.get("/job-vacancies", async (req, res) => {
   }
 });
 
-app.put("/job-vacancies/:company", async (req, res) => {
-  try {
-    const company = await Company.updateOne(
-      { name_company: req.params.company },
-      { status: true }
-    );
-    res.status(200).json({
-      message: company,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
-});
+// app.put("/job-vacancies/:company/:token", async (req, res) => {
+//   try {
+//     const company = await Company.updateOne(
+//       { name_company: req.params.company },
+//       { status: {token} }
+//     );
+//     res.status(200).json({
+//       message: company,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: error.message,
+//     });
+//   }
+// });
 
 app.get("/select-position/:token/:name_company", async (req, res) => {
   try {
     const { token, name_company } = req.params;
 
     if (token !== "") {
-      const dataJob = await DataJobPosition.findOne({ token });
+      const dataJob = await DataJobPosition.find({ token });
       return res.status(200).json({
         message: dataJob,
       });
@@ -115,6 +139,7 @@ app.get("/select-position/:token/:name_company", async (req, res) => {
       return res.status(200).json({
         message: dataJob,
       });
+      s;
     }
   } catch (error) {
     res.status(500).json({
@@ -132,7 +157,6 @@ app.post("/select-position", async (req, res) => {
       notes: req.body.notes,
       token: req.body.token,
     });
-    console.log(req.body.name_company);
 
     res.status(200).json({
       message: "data berhasil di kirim",

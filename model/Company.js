@@ -7,7 +7,7 @@ const companySchema = mongoose.Schema({
   address: {
     type: String,
   },
-  status: { type: Boolean, default: false },
+  status: { type: Array },
 });
 
 const Company = mongoose.model("Company", companySchema);
