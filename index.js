@@ -74,6 +74,24 @@ app.get("/job-vacancies/:token", async (req, res) => {
     const token = req.params.token;
     // mengambil dataJob menggunakan token
     const dataJob = await DataJobPosition.find({ token });
+    const dataCompany = await Company.find();
+
+    // untuk validasi data company dan data job
+    dataCompany.map((v, i) => {
+      v.status.map((d, i) => {
+        if (d.token == token) {
+          dataJob.map(async (job, i) => {
+            if (v.name_company !== job.name_company) {
+              const result = await Company.findOneAndUpdate(
+                { name_company: v.name_company }, // filter boz
+                { $pull: { status: { token: d.token } } }, // Menghapus elemen dari array
+                { new: true }
+              );
+            }
+          });
+        }
+      });
+    });
 
     // jika data job tidak ada maka langsung me-return company
     if (dataJob.length == 0) {
@@ -91,7 +109,6 @@ app.get("/job-vacancies/:token", async (req, res) => {
             status: { token },
           }
         );
-        console.log(company);
       });
     }
 
@@ -105,22 +122,6 @@ app.get("/job-vacancies/:token", async (req, res) => {
     });
   }
 });
-
-// app.put("/job-vacancies/:company/:token", async (req, res) => {
-//   try {
-//     const company = await Company.updateOne(
-//       { name_company: req.params.company },
-//       { status: {token} }
-//     );
-//     res.status(200).json({
-//       message: company,
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       message: error.message,
-//     });
-//   }
-// });
 
 app.get("/select-position/:token/:name_company", async (req, res) => {
   try {
