@@ -76,30 +76,6 @@ app.get("/job-vacancies/:token", async (req, res) => {
     const dataJob = await DataJobPosition.find({ token });
     const dataCompany = await Company.find();
 
-    // untuk validasi data company dan data job
-    dataCompany.map((v, i) => {
-      v.status.map((d, i) => {
-        if (d.token == token) {
-          dataJob.map(async (job, i) => {
-            if (v.name_company !== job.name_company) {
-              const result = await Company.findOneAndUpdate(
-                { name_company: v.name_company }, // filter boz
-                { $pull: { status: { token: d.token } } }, // Menghapus elemen dari array
-                { new: true }
-              );
-            }
-          });
-        }
-      });
-    });
-
-    // jika data job tidak ada maka langsung me-return company
-    if (dataJob.length == 0) {
-      const company = await Company.find();
-      return res.status(200).json({
-        message: company,
-      });
-    }
     // jika datanya ada maka si data job akan diambil nilai name_company menggunakan map lalu data company di update berdasarkan nilai name_company dari dataJob
     if (dataJob.length !== 0) {
       dataJob.map(async (v, i) => {
@@ -113,6 +89,8 @@ app.get("/job-vacancies/:token", async (req, res) => {
     }
 
     const company = await Company.find();
+    console.log(company);
+
     res.status(200).json({
       message: company,
     });
